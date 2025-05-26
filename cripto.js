@@ -1,27 +1,48 @@
-
 const msg = "ATACARBASENORTE"
 const key = "FOGO"
-const extended_key = extend(key, msg)
+const code = vigenereCypher(key, msg)
 
-console.log(extended_key)
+console.log("\nMSG: " + validate(msg))
+console.log("KEY: " + validate(key))
+console.log("CODE: " + code)
 
-/* Return the Cesar's alphabet based on caracter especified
-   It's the first part of the Vigenere's cypher
-*/
-function cesarCypher(char) {
-    const alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-    const move = char.charCodeAt(0) - 65
-    const cesar = alphabet.slice(move).concat(alphabet.slice(0, move))
-    return cesar
+// Vigenere's cypher logic
+function vigenereCypher(key, msg) {
+    msg = validate(msg)
+    key = extendKey(validate(key), msg.length)
+
+    let code = ""
+    for (let i = 0; i < key.length; i++) {
+        const ENCODE_A = "A".charCodeAt(0)
+
+        const indexMsg = msg[i].charCodeAt(0) - ENCODE_A
+        const indexKey = key[i].charCodeAt(0) - ENCODE_A
+        const indexCode = (indexMsg + indexKey) % 26
+        code += String.fromCharCode(indexCode + ENCODE_A)
+    }
+    return code
 }
 
 // Return the extended vesion of key based on the length of message
-function extend(key, msg) {
+function extendKey(key, len) {
     let format_key = ""
-    for (let i = 0; i < msg.length; i++) {
-        const teste = i % key.length
-        console.log(teste)
-        format_key += key[teste]
+    for (let i = 0; i < len; i++) {
+        format_key += key[i % key.length]
     }
     return format_key
+}
+
+function validate(text) {
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    text = text.toUpperCase().trim()
+    let validText = ""
+    for (let i = 0; i < text.length; i++) { 
+        if (alphabet.includes(text[i])) {
+            validText += text[i]
+        }
+    }
+    if (!(validText == text)) {
+        console.log("* Text validation deleted some values!")
+    }
+    return validText
 }
